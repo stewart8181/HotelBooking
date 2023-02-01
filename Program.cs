@@ -70,11 +70,17 @@ namespace HotelBooking
             Console.WriteLine("Please enter the customers last name:");
             String lastName = Console.ReadLine();
 
-            rooms[roomNum - 1].roomBooked = true;
-            rooms[roomNum - 1].customerLastName = lastName;
-            rooms[roomNum - 1].customerFirstName = firstName;
-
-            Console.WriteLine("Room " + roomNum + " is now booked");
+            try
+            { 
+                rooms[roomNum - 1].roomBooked = true;
+                rooms[roomNum - 1].customerLastName = lastName;
+                rooms[roomNum - 1].customerFirstName = firstName;
+                Console.WriteLine("Room " + roomNum + " is now booked");
+            }
+            catch(IndexOutOfRangeException)
+            {
+                Console.WriteLine("Please enter a valid room number!");
+            }            
         }
 
         static void viewCheckins(Booking[] rooms)
@@ -94,18 +100,28 @@ namespace HotelBooking
         static void importCheckins(Booking[] rooms)
         {
             String fileName = @"C:\Temp\hotelBookings.txt";
-            
-            using (StreamReader reader = new StreamReader(fileName))
+
+            try
             {
-                while (reader.Peek() >= 0)
+                using (StreamReader reader = new StreamReader(fileName))
+
                 {
-                    String nextLine = reader.ReadLine();
-                    String[] roomDetails = nextLine.Split(';');
-                    rooms[Convert.ToInt32(roomDetails[0])].roomBooked = true;
-                    rooms[Convert.ToInt32(roomDetails[0])].customerFirstName = roomDetails[1];
-                    rooms[Convert.ToInt32(roomDetails[0])].customerLastName = roomDetails[2];
+                    while (reader.Peek() >= 0)
+                    {
+                        String nextLine = reader.ReadLine();
+                        String[] roomDetails = nextLine.Split(';');
+                        rooms[Convert.ToInt32(roomDetails[0])].roomBooked = true;
+                        rooms[Convert.ToInt32(roomDetails[0])].customerFirstName = roomDetails[1];
+                        rooms[Convert.ToInt32(roomDetails[0])].customerLastName = roomDetails[2];
+                    }
                 }
+
             }
+            catch(System.IO.FileNotFoundException)
+            {
+                Console.WriteLine("No input file has been found!");
+            }
+
         }
 
         static void checkOut(Booking[] rooms)
